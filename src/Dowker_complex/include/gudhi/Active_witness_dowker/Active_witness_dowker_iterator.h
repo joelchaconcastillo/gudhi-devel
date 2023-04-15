@@ -1,11 +1,7 @@
 /*    This file is part of the Gudhi Library - https://gudhi.inria.fr/ - which is released under MIT.
  *    See file LICENSE or go to https://gudhi.inria.fr/licensing/ for full license details.
- *    Author(s):       Siargey Kachanovich
- *
- *    Copyright (C) 2016 Inria
- *
- *    Modification(s):
- *      - YYYY/MM Author: Description of the modification
+ *    Author(s): Joel Chacon, Jose Frias, Ignacio Segovia, Yuzhu Chen, Yulia R. Gel
+ *    Contact email: joel.chaconcastillo@utdallas.edu
  */
 
 #ifndef ACTIVE_WITNESS_ACTIVE_WITNESS_ITERATOR_H_

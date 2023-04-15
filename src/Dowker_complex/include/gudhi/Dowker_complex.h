@@ -1,12 +1,9 @@
 /*    This file is part of the Gudhi Library - https://gudhi.inria.fr/ - which is released under MIT.
  *    See file LICENSE or go to https://gudhi.inria.fr/licensing/ for full license details.
- *    Author(s):       Siargey Kachanovich
+ *    Author(s):       Joel Chacon, Jose Frias, Ignacio Segovia, Yuzhu Chen, Yulia R. Gel
+ *    Contact email: joel.chaconcastillo@utdallas.edu
  *
- *    Copyright (C) 2015 Inria
- *
- *    Modification(s):
- *      - YYYY/MM Author: Description of the modification
- */
+  */
 
 #ifndef DOWKER_COMPLEX_H_
 #define DOWKER_COMPLEX_H_
