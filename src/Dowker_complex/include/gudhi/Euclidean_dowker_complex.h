@@ -12,8 +12,8 @@
 #ifndef EUCLIDEAN_WITNESS_COMPLEX_H_
 #define EUCLIDEAN_WITNESS_COMPLEX_H_
 
-#include <gudhi/Witness_complex.h>
-#include <gudhi/Active_witness/Active_witness.h>
+#include <gudhi/Dowker_complex.h>
+#include <gudhi/Active_witness_dowker/Active_witness_dowker.h>
 #include <gudhi/Kd_tree_search.h>
 
 #include <CGAL/version.h>  // for CGAL_VERSION_NR
@@ -27,11 +27,11 @@
 
 // Make compilation fail - required for external projects - https://github.com/GUDHI/gudhi-devel/issues/10
 #if CGAL_VERSION_NR < 1041101000
-# error Euclidean_witness_complex is only available for CGAL >= 4.11
+# error Euclidean_dowker_complex is only available for CGAL >= 4.11
 #endif
 
 #if !EIGEN_VERSION_AT_LEAST(3,1,0)
-# error Euclidean_witness_complex is only available for Eigen3 >= 3.1.0 installed with CGAL
+# error Euclidean_dowker_complex is only available for Eigen3 >= 3.1.0 installed with CGAL
 #endif
 
 namespace Gudhi {
@@ -40,7 +40,7 @@ namespace witness_complex {
 
 /**
  * \private
- * \class Euclidean_witness_complex
+ * \class Euclidean_dowker_complex
  * \brief Constructs (weak) witness complex for given sets of witnesses and landmarks in Euclidean space.
  * \ingroup witness_complex
  *
@@ -48,7 +48,7 @@ namespace witness_complex {
  * href="http://doc.cgal.org/latest/Kernel_d/classCGAL_1_1Epick__d.html">CGAL::Epick_d</a> class.
  */
 template< class Kernel_ >
-class Euclidean_witness_complex
+class Euclidean_dowker_complex
     : public Witness_complex<std::vector<typename Gudhi::spatial_searching::Kd_tree_search<Kernel_,
                                          std::vector<typename Kernel_::Point_d>>::INS_range>> {
  private:
@@ -66,7 +66,7 @@ class Euclidean_witness_complex
  private:
   Point_range                         landmarks_;
   Kd_tree                             landmark_tree_;
-  using Witness_complex<Nearest_landmark_table>::nearest_landmark_table_;
+  using Dowker_complex<Nearest_landmark_table>::nearest_landmark_table_;
 
  public:
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ class Euclidean_witness_complex
    */
   template< typename LandmarkRange,
             typename WitnessRange >
-  Euclidean_witness_complex(const LandmarkRange & landmarks,
+  Euclidean_dowker_complex(const LandmarkRange & landmarks,
                             const WitnessRange &  witnesses)
     : landmarks_(std::begin(landmarks), std::end(landmarks)), landmark_tree_(landmarks) {
     nearest_landmark_table_.reserve(boost::size(witnesses));

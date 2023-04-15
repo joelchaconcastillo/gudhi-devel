@@ -11,12 +11,12 @@
 #ifndef ACTIVE_WITNESS_ACTIVE_WITNESS_H_
 #define ACTIVE_WITNESS_ACTIVE_WITNESS_H_
 
-#include <gudhi/Active_witness/Active_witness_iterator.h>
+#include <gudhi/Active_witness_dowker/Active_witness_dowker_iterator.h>
 #include <list>
 
 namespace Gudhi {
 
-namespace witness_complex {
+namespace dowker_complex {
 
   /** \class Active_witness
    *  \brief Class representing a list of nearest neighbors to a given witness.
@@ -24,11 +24,11 @@ namespace witness_complex {
   */
 template< typename Id_distance_pair,
           typename INS_range >
-class Active_witness {
+class Active_witness_dowker{
  public:
-  typedef Active_witness<Id_distance_pair, INS_range> ActiveWitness;
+  typedef Active_witness_dowker<Id_distance_pair, INS_range> ActiveWitness;
   typedef typename INS_range::iterator INS_iterator;
-  typedef Active_witness_iterator< ActiveWitness, Id_distance_pair, INS_iterator > iterator;
+  typedef Active_witness_dowker_iterator< ActiveWitness, Id_distance_pair, INS_iterator > iterator;
   typedef typename std::list<Id_distance_pair> Table;
 
   Table nearest_landmark_table_;
@@ -36,7 +36,7 @@ class Active_witness {
   INS_iterator iterator_next_;
   INS_iterator iterator_end_;
 
-  Active_witness(const INS_range& search_range)
+  Active_witness_dowker(const INS_range& search_range)
     : search_range_(search_range), iterator_next_(search_range_.begin()), iterator_end_(search_range_.end()) {
   }
 

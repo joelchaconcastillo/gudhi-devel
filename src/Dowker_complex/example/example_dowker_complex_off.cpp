@@ -2,7 +2,7 @@
 #include <sys/stat.h>
 
 #include <gudhi/Simplex_tree.h>
-#include <gudhi/Euclidean_witness_complex.h>
+#include <gudhi/Euclidean_dowker_complex.h>
 #include <gudhi/pick_n_random_points.h>
 #include <gudhi/choose_n_farthest_points.h>
 #include <gudhi/Points_off_io.h>
@@ -17,7 +17,7 @@
 
 using K = CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
 using Point_d = K::Point_d;
-using Witness_complex = Gudhi::witness_complex::Euclidean_witness_complex<K>;
+using Dowker_complex = Gudhi::dowker_complex::Euclidean_dowker_complex<K>;
 using Point_vector = std::vector< Point_d >;
 
 int main(int argc, char * const argv[]) {
@@ -52,10 +52,10 @@ int main(int argc, char * const argv[]) {
 
   // Compute witness complex
   start = clock();
-  Witness_complex witness_complex(landmarks,
+  Dowker_complex dowker_complex(landmarks,
                                   point_vector);
 
-  witness_complex.create_complex(simplex_tree, alpha2, lim_dim);
+  dowker_complex.create_complex(simplex_tree, alpha2, lim_dim);
   end = clock();
   std::clog << "Witness complex took "
       << static_cast<double>(end - start) / CLOCKS_PER_SEC << " s. \n";

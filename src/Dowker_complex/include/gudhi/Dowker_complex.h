@@ -8,11 +8,11 @@
  *      - YYYY/MM Author: Description of the modification
  */
 
-#ifndef WITNESS_COMPLEX_H_
-#define WITNESS_COMPLEX_H_
+#ifndef DOWKER_COMPLEX_H_
+#define DOWKER_COMPLEX_H_
 
-#include <gudhi/Active_witness/Active_witness.h>
-#include <gudhi/Witness_complex/all_faces_in.h>
+#include <gudhi/Active_witness_dowker/Active_witness_dowker.h>
+#include <gudhi/Dowker_complex/all_faces_in.h>
 
 #include <utility>
 #include <vector>
@@ -21,13 +21,13 @@
 
 namespace Gudhi {
 
-namespace witness_complex {
+namespace dowker_complex {
 
 /**
  * \private
- * \class Witness_complex
- * \brief Constructs (weak) witness complex for a given table of nearest landmarks with respect to witnesses.
- * \ingroup witness_complex
+ * \class Dowker_complex
+ * \brief Constructs (weak) dowker complex for a given table of nearest landmarks with respect to dowkeres.
+ * \ingroup dowker_complex
  *
  * \tparam Nearest_landmark_table_ needs to be a range of a range of pairs of nearest landmarks and distances.
  *         The class Nearest_landmark_table_::value_type must be a copiable range.
@@ -35,13 +35,13 @@ namespace witness_complex {
  *         of the pair range iterator needs to be 'std::pair<std::size_t, double>'.
 */
 template< class Nearest_landmark_table_ >
-class Witness_complex {
+class Dowker_complex {
  private:
   typedef typename Nearest_landmark_table_::value_type               Nearest_landmark_range;
-  typedef std::size_t                                                Witness_id;
+  typedef std::size_t                                                Dowker_id;
   typedef std::size_t                                                Landmark_id;
   typedef std::pair<Landmark_id, double>                             Id_distance_pair;
-  typedef Active_witness<Id_distance_pair, Nearest_landmark_range>   ActiveWitness;
+  typedef Active_witness_dowker<Id_distance_pair, Nearest_landmark_range>   ActiveWitness;
   typedef std::list< ActiveWitness >                                 ActiveWitnessList;
   typedef std::vector< Landmark_id >                                 typeVectorVertex;
   typedef std::vector<Nearest_landmark_range>                        Nearest_landmark_table_internal;
@@ -57,65 +57,65 @@ class Witness_complex {
 
   //@{
 
-  Witness_complex() {
+  Dowker_complex() {
   }
 
   /**
    *  \brief Initializes member variables before constructing simplicial complex.
    *  \details Records nearest landmark table.
-   *  @param[in] nearest_landmark_table needs to be a range (one entry per witness)
+   *  @param[in] nearest_landmark_table needs to be a range (one entry per dowker)
    *         of sorted ranges of pairs of nearest landmarks and distances.
    *         The class Nearest_landmark_table_::value_type must be a copiable range.
    *         The range of pairs must admit a member type 'iterator'. The dereference type 
    *         of the pair range iterator needs to be 'std::pair<std::size_t, double>'
    *         where the first element is the index of the landmark, and the second its
-   *         (squared) distance to the witness.
+   *         (squared) distance to the dowker.
    */
 
-  Witness_complex(Nearest_landmark_table_ const & nearest_landmark_table)
+  Dowker_complex(Nearest_landmark_table_ const & nearest_landmark_table)
     : nearest_landmark_table_(std::begin(nearest_landmark_table), std::end(nearest_landmark_table)) {
   }
 
-  /** \brief Outputs the (weak) witness complex of relaxation 'max_alpha_square'
+  /** \brief Outputs the (weak) dowker complex of relaxation 'epsilon'
    *         in a simplicial complex data structure.
    *  \details The function returns true if the construction is successful and false otherwise.
    *  @param[out] complex Simplicial complex data structure compatible which is a model of
-   *              SimplicialComplexForWitness concept.
-   *  @param[in] max_alpha_square Maximal squared relaxation parameter.
+   *              SimplicialComplexForDowker concept.
+   *  @param[in] epsilon Maximal squared relaxation parameter.
    *  @param[in] limit_dimension Represents the maximal dimension of the simplicial complex
    *         (default value = no limit).
    */
-  template < typename SimplicialComplexForWitness >
-  bool create_complex(SimplicialComplexForWitness& complex,
-                      double  max_alpha_square,
+  template < typename SimplicialComplexForDowker >
+  bool create_complex(SimplicialComplexForDowker& complex,
+                      double  epsilon,
                       std::size_t limit_dimension = std::numeric_limits<std::size_t>::max()) const {
     if (complex.num_vertices() > 0) {
-      std::cerr << "Witness complex cannot create complex - complex is not empty.\n";
+      std::cerr << "Dowker complex cannot create complex - complex is not empty.\n";
       return false;
     }
-    if (max_alpha_square < 0) {
-      std::cerr << "Witness complex cannot create complex - squared relaxation parameter must be non-negative.\n";
+    if (epsilon< 0) {
+      std::cerr << "Dowker complex cannot create complex - squared relaxation parameter must be non-negative.\n";
       return false;
     }
     std::cout<<"here!!!\n";
-    ActiveWitnessList active_witnesses;
+    ActiveWitnessList active_witness;
     Landmark_id k = 0; /* current dimension in iterative construction */
     for (auto&& w : nearest_landmark_table_)
-      active_witnesses.emplace_back(w);
-    while (!active_witnesses.empty() && k <= limit_dimension) {
-      typename ActiveWitnessList::iterator aw_it = active_witnesses.begin();
+      active_witness.emplace_back(w);
+    while (!active_witness.empty() && k <= limit_dimension) {
+      typename ActiveWitnessList::iterator aw_it = active_witness.begin();
       std::vector<Landmark_id> simplex;
       simplex.reserve(k+1);
-      while (aw_it != active_witnesses.end()) {
+      while (aw_it != active_witness.end()) {
         bool ok = add_all_faces_of_dimension(k,
-                                             max_alpha_square,
+                                             epsilon,
                                              aw_it->begin(),
                                              simplex,
                                              complex,
                                              aw_it->end());
         assert(simplex.empty());
         if (!ok)
-          active_witnesses.erase(aw_it++);  // First increase the iterator and then erase the previous element
+          active_witness.erase(aw_it++);  // First increase the iterator and then erase the previous element
         else
           aw_it++;
       }
@@ -127,34 +127,34 @@ class Witness_complex {
   //@}
 
  private:
-  /** \brief Adds recursively all the faces of a certain dimension dim witnessed by the same witness.
+  /** \brief Adds recursively all the faces of a certain dimension dim dowkered by the same dowker.
    * Iterator is needed to know until how far we can take landmarks to form simplexes.
    * simplex is the prefix of the simplexes to insert.
-   * The output value indicates if the witness rests active or not.
+   * The output value indicates if the dowker rests active or not.
    */
-  template < typename SimplicialComplexForWitness >
+  template < typename SimplicialComplexForDowker >
   bool add_all_faces_of_dimension(int dim,
-                                  double alpha2,
+                                  double epsilon,
                                   typename ActiveWitness::iterator curr_l,
                                   std::vector<Landmark_id>& simplex,
-                                  SimplicialComplexForWitness& sc,
+                                  SimplicialComplexForDowker& sc,
                                   typename ActiveWitness::iterator end) const {
     if (curr_l == end)
       return false;
     bool will_be_active = false;
     typename ActiveWitness::iterator l_it = curr_l;
     if (dim > 0) {
-      for (; l_it != end && l_it->second <= alpha2 ; ++l_it) {
+      for (; l_it != end && l_it->second <= epsilon; ++l_it) {
         simplex.push_back(l_it->first);
         if (sc.find(simplex) != sc.null_simplex()) {
           typename ActiveWitness::iterator next_it = l_it;
-          will_be_active = add_all_faces_of_dimension(dim-1, alpha2, ++next_it, simplex, sc, end) || will_be_active;
+          will_be_active = add_all_faces_of_dimension(dim-1, epsilon, ++next_it, simplex, sc, end) || will_be_active;
         }
         assert(!simplex.empty());
         simplex.pop_back();
       }
     } else if (dim == 0) {
-      for (; l_it != end && l_it->second <= alpha2; ++l_it) {
+      for (; l_it != end && l_it->second <= epsilon; ++l_it) {
         simplex.push_back(l_it->first);
         double filtration_value = 0;
         filtration_value = l_it->second;
@@ -170,8 +170,8 @@ class Witness_complex {
   }
 };
 
-}  // namespace witness_complex
+}  // namespace dowker_complex
 
 }  // namespace Gudhi
 
-#endif  // WITNESS_COMPLEX_H_
+#endif  // DOWKER_COMPLEX_H_

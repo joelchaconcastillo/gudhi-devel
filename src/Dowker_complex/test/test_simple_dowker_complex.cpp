@@ -12,13 +12,12 @@
 #include <utility>
 
 
-BOOST_AUTO_TEST_CASE(simple_witness_complex) {
+BOOST_AUTO_TEST_CASE(simple_dowker_complex) {
   using Nearest_landmark_range = std::vector<std::pair<std::size_t, double>>;
   using Nearest_landmark_table = std::vector<Nearest_landmark_range>;
-  using Witness_complex = Gudhi::witness_complex::Witness_complex<Nearest_landmark_table>;
+  using Dowker_complex = Gudhi::dowker_complex::Dowker_complex<Nearest_landmark_table>;
   using Simplex_tree = Gudhi::Simplex_tree<>;
  using namespace std;
- cout <<"...!!!!!!!"<<endl;
   Simplex_tree stree;
   Nearest_landmark_table nlt;
 
@@ -34,20 +33,20 @@ BOOST_AUTO_TEST_CASE(simple_witness_complex) {
   Nearest_landmark_range w4 = {std::make_pair(4, 0), std::make_pair(0, 1), std::make_pair(1, 2),
                                std::make_pair(2, 3), std::make_pair(3, 4)}; nlt.push_back(w4);
 
-  Witness_complex witness_complex(nlt);
-  BOOST_CHECK(witness_complex.create_complex(stree, 4.1));
+  Dowker_complex dowker_complex(nlt);
+  BOOST_CHECK(dowker_complex.create_complex(stree, 4.1));
 
   std::clog << "Number of simplices: " << stree.num_simplices() << std::endl;
   BOOST_CHECK(stree.num_simplices() == 31);
 
   // Check when complex not empty
-  BOOST_CHECK(!witness_complex.create_complex(stree, 4.1));
+  BOOST_CHECK(!dowker_complex.create_complex(stree, 4.1));
 
   // Check when max_alpha_square negative
   Simplex_tree stree2;
-  BOOST_CHECK(!witness_complex.create_complex(stree2, -0.02));
+  BOOST_CHECK(!dowker_complex.create_complex(stree2, -0.02));
 
-  witness_complex.create_complex(stree2, 4.1, 2);
+  dowker_complex.create_complex(stree2, 4.1, 2);
   std::clog << "Number of simplices: " << stree2.num_simplices() << std::endl;
   BOOST_CHECK(stree2.num_simplices() == 25);
 

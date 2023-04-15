@@ -9,7 +9,7 @@
  */
 
 #include <gudhi/Simplex_tree.h>
-#include <gudhi/Euclidean_witness_complex.h>
+#include <gudhi/Euclidean_dowker_complex.h>
 #include <gudhi/Persistent_cohomology.h>
 #include <gudhi/Points_off_io.h>
 #include <gudhi/pick_n_random_points.h>
@@ -27,7 +27,7 @@ using K = CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
 using Point_d = K::Point_d;
 
 using Point_vector = std::vector<Point_d>;
-using Witness_complex = Gudhi::witness_complex::Euclidean_witness_complex<K>;
+using Witness_complex = Gudhi::dowker_complex::Euclidean_dowker_complex<K>;
 using SimplexTree = Gudhi::Simplex_tree<>;
 
 using Filtration_value = SimplexTree::Filtration_value;
@@ -36,23 +36,23 @@ using Field_Zp = Gudhi::persistent_cohomology::Field_Zp;
 using Persistent_cohomology = Gudhi::persistent_cohomology::Persistent_cohomology<SimplexTree, Field_Zp>;
 
 void program_options(int argc, char* argv[], int& nbL, std::string& file_name, std::string& filediag,
-                     Filtration_value& max_squared_alpha, int& p, int& dim_max, Filtration_value& min_persistence);
+                     Filtration_value& epsilon, int& p, int& dim_max, Filtration_value& min_persistence);
 
 int main(int argc, char* argv[]) {
   std::string file_name;
   std::string filediag;
-  Filtration_value max_squared_alpha;
+  Filtration_value epsilon;
   int p, nbL, lim_d;
   Filtration_value min_persistence;
   SimplexTree simplex_tree;
 
-  program_options(argc, argv, nbL, file_name, filediag, max_squared_alpha, p, lim_d, min_persistence);
+  program_options(argc, argv, nbL, file_name, filediag, epsilon, p, lim_d, min_persistence);
 
   // Extract the points from the file file_name
   Point_vector witnesses, landmarks;
   Gudhi::Points_off_reader<Point_d> off_reader(file_name);
   if (!off_reader.is_valid()) {
-    std::cerr << "Witness complex - Unable to read file " << file_name << "\n";
+    std::cerr << "Dowker complex - Unable to read file " << file_name << "\n";
     exit(-1);  // ----- >>
   }
   witnesses = Point_vector(off_reader.get_point_cloud());
@@ -66,9 +66,9 @@ int main(int argc, char* argv[]) {
                                                std::back_inserter(landmarks));
 
   // Compute witness complex
-  Witness_complex witness_complex(landmarks, witnesses);
+  Dowker_complex dowker_complex(landmarks, witnesses);
 
-  witness_complex.create_complex(simplex_tree, max_squared_alpha, lim_d);
+  dowker_complex.create_complex(simplex_tree, epsilon, lim_d);
 
   std::clog << "The complex contains " << simplex_tree.num_simplices() << " simplices \n";
   std::clog << "   and has dimension " << simplex_tree.dimension() << " \n";
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 }
 
 void program_options(int argc, char* argv[], int& nbL, std::string& file_name, std::string& filediag,
-                     Filtration_value& max_squared_alpha, int& p, int& dim_max, Filtration_value& min_persistence) {
+                     Filtration_value& epsilon, int& p, int& dim_max, Filtration_value& min_persistence) {
   namespace po = boost::program_options;
 
   po::options_description hidden("Hidden options");
@@ -109,7 +109,7 @@ void program_options(int argc, char* argv[], int& nbL, std::string& file_name, s
                                                           "Number of landmarks to choose from the point cloud.")(
       "output-file,o", po::value<std::string>(&filediag)->default_value(std::string()),
       "Name of file in which the persistence diagram is written. Default print in standard output")(
-      "max-sq-alpha,a", po::value<Filtration_value>(&max_squared_alpha)->default_value(default_alpha),
+      "max-sq-alpha,a", po::value<Filtration_value>(&epsilon)->default_value(default_alpha),
       "Maximal squared relaxation parameter.")(
       "field-charac,p", po::value<int>(&p)->default_value(11),
       "Characteristic p of the coefficient field Z/pZ for computing homology.")(

@@ -8,8 +8,8 @@
  *      - YYYY/MM Author: Description of the modification
  */
 
-#ifndef WITNESS_COMPLEX_ALL_FACES_IN_H_
-#define WITNESS_COMPLEX_ALL_FACES_IN_H_
+#ifndef DOWKER_COMPLEX_ALL_FACES_IN_H_
+#define DOWKER_COMPLEX_ALL_FACES_IN_H_
 
 /** \brief Check if the facets of the k-dimensional simplex witnessed 
  *  by witness witness_id are already in the complex.
@@ -40,4 +40,4 @@ template < typename SimplicialComplexForWitness,
     return true;
   }
 
-#endif  // WITNESS_COMPLEX_ALL_FACES_IN_H_
+#endif  // DOWKER_COMPLEX_ALL_FACES_IN_H_
