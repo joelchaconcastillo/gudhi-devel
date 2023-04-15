@@ -44,6 +44,7 @@ add_gudhi_module(Subsampling)
 add_gudhi_module(Tangential_complex)
 add_gudhi_module(Toplex_map)
 add_gudhi_module(Witness_complex)
+add_gudhi_module(Dowker_complex)
 add_gudhi_module(Nerve_GIC)
 
 # Include module CMake subdirectories
